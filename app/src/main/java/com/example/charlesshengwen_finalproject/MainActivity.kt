@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.toArgb
 
-data class ChartModel(
+data class ChartPart(
     val value: Float,
     val color: Color,
 )
@@ -51,10 +51,10 @@ class MainActivity : ComponentActivity() {
 }
 
 val charts = listOf(
-    ChartModel(value = 20f, color = Color.Black),
-    ChartModel(value = 30f, color = Color.Gray),
-    ChartModel(value = 40f, color = Color.Green),
-    ChartModel(value = 10f, color = Color.Red),
+    ChartPart(value = 20f, color = Color.Black),
+    ChartPart(value = 30f, color = Color.Gray),
+    ChartPart(value = 40f, color = Color.Green),
+    ChartPart(value = 10f, color = Color.Red),
 )
 
 @Composable
@@ -69,7 +69,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 private fun ChartCirclePie(
     modifier: Modifier,
-    charts: List<ChartModel>,
+    charts: List<ChartPart>,
     size: Dp = 200.dp,
     strokeWidth: Dp = 16.dp
 ) {
