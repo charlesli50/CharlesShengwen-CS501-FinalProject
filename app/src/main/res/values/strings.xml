@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CharlesShengwen-FinalProject</string>
+    <string name="api_key">your-api-key-here</string>
 </resources>
