@@ -39,6 +39,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.installations.BuildConfig
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -49,7 +51,7 @@ const val SIGN_IN_WITH_GOOGLE = "Sign in with Google"
 
 
 @Composable
-fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: () -> Unit) {
+fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> Unit) {
     var isSigningIn by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()  // Create a CoroutineScope
@@ -63,12 +65,15 @@ fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: () -> Unit) {
             Log.w(TAG, "Google sign-in failed with result code: ${result.resultCode}")
             return@rememberLauncherForActivityResult
         }
+
+        val googleSignInClient = GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN)
+
         val oneTapClient = Identity.getSignInClient(context)
         val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
         val idToken = credential.googleIdToken
         if (idToken != null) {
             // Use the ID token to authenticate with Firebase
-            firebaseAuthWithGoogle(auth, idToken, onSignInSuccess)
+            firebaseAuthWithGoogle(auth, idToken) { onSignInSuccess(googleSignInClient) }
         } else {
             Log.w(TAG, "Google sign-in failed: No ID token!")
         }
@@ -166,9 +171,10 @@ suspend fun signIn(
 }
 
 
-fun signOut(googleSignInClient: GoogleSignInClient, auth: FirebaseAuth) {
+fun signOut(googleSignInClient: GoogleSignInClient, auth: FirebaseAuth, onSignOut: () -> Unit) {
     auth.signOut()
     googleSignInClient.signOut().addOnCompleteListener {
         Log.d(TAG, "signOut:success")
+        onSignOut()
     }
 }

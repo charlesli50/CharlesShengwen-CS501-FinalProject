@@ -1,17 +1,27 @@
 package com.example.charlesshengwen_finalproject
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.ui.unit.Dp
+import com.example.charlesshengwen_finalproject.auth.signOut
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
 
 
 data class ChartPart(
@@ -29,11 +39,38 @@ val charts = listOf(
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier){
-    ChartCirclePie(
-        modifier = modifier,
-        charts = charts
-    )
+fun HomeScreen(auth: FirebaseAuth, googleSignInClient: GoogleSignInClient, modifier: Modifier = Modifier, onSignOut: () -> Unit){
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ChartCirclePie(
+            modifier = modifier,
+            charts = charts
+        )
+        SignOutButton("Sign Out of Google", onClicked = {
+            signOut(googleSignInClient, auth, onSignOut)
+        })
+    }
+}
+
+@Composable
+private fun SignOutButton(
+    text: String,
+    onClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = { onClicked() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = text
+        )
+    }
 }
 
 
