@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import com.example.charlesshengwen_finalproject.auth.signOut
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.example.charlesshengwen_finalproject.db.FoodItemViewer
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 
@@ -40,18 +44,35 @@ val charts = listOf(
 
 @Composable
 fun HomeScreen(auth: FirebaseAuth, googleSignInClient: GoogleSignInClient, modifier: Modifier = Modifier, onSignOut: () -> Unit){
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ChartCirclePie(
-            modifier = modifier,
-            charts = charts
-        )
-        SignOutButton("Sign Out of Google", onClicked = {
-            signOut(googleSignInClient, auth, onSignOut)
-        })
+    var viewingFoodItems by remember { mutableStateOf(false) }
+
+    if(viewingFoodItems){
+        FoodItemViewer()
+    } else {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ChartCirclePie(
+                modifier = modifier,
+                charts = charts
+            )
+            SignOutButton("Sign Out of Google", onClicked = {
+                signOut(googleSignInClient, auth, onSignOut)
+            })
+//        should use navigation system later.
+            Button(
+                onClick = {
+                    viewingFoodItems = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "View Food Items!")
+            }
+        }
     }
 }
 

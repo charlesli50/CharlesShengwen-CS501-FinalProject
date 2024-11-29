@@ -83,6 +83,12 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
 
+    //viewmodels
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+
+    //firebase db
+    implementation("com.google.firebase:firebase-firestore")
+
 }
 
 // Allow references to generated code
