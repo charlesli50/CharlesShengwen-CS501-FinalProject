@@ -21,7 +21,7 @@ import java.util.Locale
 fun FoodItemViewer(
     viewModel: FoodViewModel = viewModel()
 ){
-    val foodItems by viewModel.foodItems.collectAsState()
+    val foodItems by viewModel.foodItems.collectAsState(initial = emptyList())
     val status by viewModel.status.collectAsState("")
 
     var foodName by remember { mutableStateOf(TextFieldValue("")) }
