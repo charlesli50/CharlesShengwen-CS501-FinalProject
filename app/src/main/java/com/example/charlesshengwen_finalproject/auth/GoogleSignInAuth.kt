@@ -55,8 +55,11 @@ import androidx.compose.foundation.clickable
 private const val SERVER_CLIENT_ID = "SERVER_API_KEY"
 const val SIGN_IN_WITH_GOOGLE = "Sign in with Google"
 
+
+
+
 @Composable
-fun WelcomeScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> Unit) {
+fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> Unit) {
     var showSignIn by remember { mutableStateOf(false) }
     var isSigningIn by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -123,7 +126,7 @@ fun WelcomeScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> U
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable { showSignIn = false } // Handle click outside the Sign-in button
+                    .clickable { showSignIn = false }
             )
 
             // "Sign in with Google" Button
@@ -160,59 +163,6 @@ fun WelcomeScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> U
     }
 }
 
-
-@Composable
-fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> Unit) {
-    var isSigningIn by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()  // Create a CoroutineScope
-
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            // Handle sign-in failure or cancellation
-            isSigningIn = false
-            Log.w(TAG, "Google sign-in failed with result code: ${result.resultCode}")
-            return@rememberLauncherForActivityResult
-        }
-
-        val googleSignInClient = GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN)
-
-        val oneTapClient = Identity.getSignInClient(context)
-        val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
-        val idToken = credential.googleIdToken
-        if (idToken != null) {
-            // Use the ID token to authenticate with Firebase
-            firebaseAuthWithGoogle(auth, idToken) { onSignInSuccess(googleSignInClient) }
-        } else {
-            Log.w(TAG, "Google sign-in failed: No ID token!")
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (isSigningIn) {
-            CircularProgressIndicator(color = Color.Blue)
-        } else {
-            GoogleSignInButton(onClick = {
-                scope.launch {
-                    isSigningIn = true
-                    try {
-                        // Perform the sign-in asynchronously
-                        signIn(context, launcher)
-                    } catch (e: Exception) {
-                        isSigningIn = false
-                        Log.w(TAG, "Google sign-in failed", e)
-                    }
-                }
-            })
-        }
-    }
-}
 
 
 
