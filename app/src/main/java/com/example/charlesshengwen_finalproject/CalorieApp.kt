@@ -14,6 +14,8 @@ import com.example.charlesshengwen_finalproject.auth.GoogleSignInScreen
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 
+// front end
+import com.example.charlesshengwen_finalproject.auth.WelcomeScreen
 
 @Composable
 fun CalorieApp(modifier: Modifier = Modifier) {
@@ -34,7 +36,7 @@ fun CalorieApp(modifier: Modifier = Modifier) {
             })
         }
     } else {
-        GoogleSignInScreen(
+        WelcomeScreen(
             auth = auth,
             onSignInSuccess = { client ->
                 isSignedIn = true // Update the state
