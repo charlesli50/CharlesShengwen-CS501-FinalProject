@@ -140,23 +140,17 @@ fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient)
                 if (isSigningIn) {
                     CircularProgressIndicator(color = Color.Green)
                 } else {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                isSigningIn = true
-                                try {
-                                    signIn(context, launcher)
-                                } catch (e: Exception) {
-                                    isSigningIn = false
-                                    Log.w(TAG, "Google sign-in failed", e)
-                                }
+                    GoogleSignInButton(onClick = {
+                        scope.launch {
+                            isSigningIn = true
+                            try {
+                                signIn(context, launcher)
+                            } catch (e: Exception) {
+                                isSigningIn = false
+                                Log.w(TAG, "Google sign-in failed", e)
                             }
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007F3C)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Sign in with Google")
-                    }
+                        }
+                    })
                 }
             }
         }
@@ -167,10 +161,12 @@ fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient)
 
 
 
+
 @Composable
 fun GoogleSignInButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007F3C)),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -184,6 +180,7 @@ fun GoogleSignInButton(onClick: () -> Unit) {
         Text(text = SIGN_IN_WITH_GOOGLE)
     }
 }
+
 
 private fun firebaseAuthWithGoogle(
     auth: FirebaseAuth,
