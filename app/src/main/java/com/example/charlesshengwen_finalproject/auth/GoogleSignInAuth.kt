@@ -60,7 +60,6 @@ const val SIGN_IN_WITH_GOOGLE = "Sign in with Google"
 
 @Composable
 fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient) -> Unit) {
-    var showSignIn by remember { mutableStateOf(false) }
     var isSigningIn by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -88,13 +87,11 @@ fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient)
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(16.dp)
     ) {
-        // Welcome Text Content
+        // Welcome Text Content at the Center
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -107,55 +104,36 @@ fun GoogleSignInScreen(auth: FirebaseAuth, onSignInSuccess: (GoogleSignInClient)
                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
-            if (!showSignIn) {
-                // Start Button
-                Button(
-                    onClick = { showSignIn = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007F3C)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Start")
-                }
-            }
         }
 
-        if (showSignIn) {
-            // Dimmed background with clickable to revert to the Start screen
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable { showSignIn = false }
-            )
-
-            // "Sign in with Google" Button
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (isSigningIn) {
-                    CircularProgressIndicator(color = Color.Green)
-                } else {
-                    GoogleSignInButton(onClick = {
-                        scope.launch {
-                            isSigningIn = true
-                            try {
-                                signIn(context, launcher)
-                            } catch (e: Exception) {
-                                isSigningIn = false
-                                Log.w(TAG, "Google sign-in failed", e)
-                            }
+        // Google Sign-In Button at the Bottom
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+        ) {
+            if (isSigningIn) {
+                CircularProgressIndicator(
+                    color = Color.Blue,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            } else {
+                GoogleSignInButton(onClick = {
+                    scope.launch {
+                        isSigningIn = true
+                        try {
+                            signIn(context, launcher)
+                        } catch (e: Exception) {
+                            isSigningIn = false
+                            Log.w(TAG, "Google sign-in failed", e)
                         }
-                    })
-                }
+                    }
+                })
             }
         }
     }
 }
+
 
 
 
